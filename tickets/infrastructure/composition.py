@@ -16,10 +16,11 @@ class Application:
             suggest_ticket_use_case=self.suggest_ticket_use_case,
         )
 
-def create_application() -> Application:
-    from infrastructure.ai.ollama_ticket_suggestion import OllamaTicketSuggestionService
 
-    suggestion_service = OllamaTicketSuggestionService()
+def create_application() -> Application:
+    from infrastructure.ai.langchain_ollama_ticket_suggestion import LangChainOllamaTicketSuggestionService
+
+    suggestion_service = LangChainOllamaTicketSuggestionService()
     return Application(
         suggestion_service=suggestion_service,
         suggest_ticket_use_case=SuggestTicketWithAIUseCase(
