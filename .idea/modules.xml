@@ -2,6 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/odoo-addons-oca-helpdesk.iml" filepath="$PROJECT_DIR$/.idea/odoo-addons-oca-helpdesk.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/slv-ai.iml" filepath="$PROJECT_DIR$/.idea/slv-ai.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/solvos.iml" filepath="$PROJECT_DIR$/.idea/solvos.iml" />
     </modules>
   </component>

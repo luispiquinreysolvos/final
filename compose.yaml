@@ -1,0 +1,85 @@
+name: slv-ai
+
+services:
+  db:
+    container_name: slv-postgres
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: ${POSTGRES_USER:-odoo}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-odoo}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  odoo:
+    container_name: slv-odoo
+    build:
+      context: .
+      dockerfile: docker/odoo/Dockerfile
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      HOST: db
+      PORT: 5432
+      USER: ${POSTGRES_USER:-odoo}
+      PASSWORD: ${POSTGRES_PASSWORD:-odoo}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    ports:
+      - "${ODOO_PORT:-8069}:8069"
+    volumes:
+      - odoo_data:/var/lib/odoo
+      - ./addons:/mnt/extra-addons:ro
+      - ./oca/helpdesk:/mnt/oca/helpdesk:ro
+      - ./docker/odoo/odoo.conf:/etc/odoo/odoo.conf:ro
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python3",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://localhost:8069/web/database/selector')",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 10s
+    restart: unless-stopped
+
+  ai-api:
+    container_name: slv-ai-api
+    build:
+      context: ./services/tickets_ai
+      dockerfile: Dockerfile
+    environment:
+      OLLAMA_HOST: http://127.0.0.1:11434
+      OLLAMA_MODEL: ${OLLAMA_MODEL:-qwen3.5:2b}
+      OLLAMA_TEMPERATURE: ${OLLAMA_TEMPERATURE:-0.1}
+      OLLAMA_MAX_TOKENS: ${OLLAMA_MAX_TOKENS:-2048}
+      OLLAMA_NUM_GPU: ${OLLAMA_NUM_GPU:-0}
+      OLLAMA_NUM_THREAD: ${OLLAMA_NUM_THREAD:-4}
+    network_mode: host
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 10s
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  odoo_data:
