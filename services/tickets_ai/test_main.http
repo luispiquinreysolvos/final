@@ -1,11 +1,28 @@
-# Test your FastAPI endpoints
-
-GET http://127.0.0.1:8000/
+# Health check
+GET http://127.0.0.1:8000/health
 Accept: application/json
 
 ###
 
-GET http://127.0.0.1:8000/hello/User
-Accept: application/json
+POST http://127.0.0.1:8000/tickets/ingest
+Content-Type: application/json
+
+{
+  "id": 123,
+  "database": "odoo_production",
+  "company_id": 1,
+  "number": "TICKET-123",
+  "name": "Login problem",
+  "description": "Cannot log in.",
+  "category": "Support",
+  "partner_email": "user@example.com",
+  "tags": ["login"],
+  "priority": "2",
+  "team_id": 4,
+  "stage": "In Progress",
+  "closed": false,
+  "active": true,
+  "write_date": "2026-10-13T08:30:00"
+}
 
 ###

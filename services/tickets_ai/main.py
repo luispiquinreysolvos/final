@@ -9,7 +9,6 @@ from infrastructure.http.routes import router as tickets_router
 
 load_dotenv()
 
-# Configure logging
 LOG_LEVEL = "INFO"
 LOG_FORMAT = "%(asctime)s | %(levelname)-8s | %(name)s | %(message)s"
 DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
@@ -20,8 +19,6 @@ logging.basicConfig(
     datefmt=DATE_FORMAT,
     stream=sys.stdout,
 )
-
-# Reduce noise from third-party loggers
 logging.getLogger("httpx").setLevel(logging.WARNING)
 logging.getLogger("httpcore").setLevel(logging.WARNING)
 logging.getLogger("ollama").setLevel(logging.WARNING)

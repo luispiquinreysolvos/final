@@ -1,8 +1,10 @@
 import logging
 from fastapi import APIRouter, Depends, HTTPException, Request
 
+from application import result
 from infrastructure.composition import Application
 from presentation.operation_result import OperationResult
+from presentation.schemas.ingest_ticket_http_request import IngestTicketHttpRequest
 from presentation.schemas.suggest_ticket_http_request import SuggestTicketHttpRequest
 from presentation.schemas.suggest_ticket_http_response import SuggestTicketHttpResponse
 from application.dtos.suggest_ticket_response import SuggestTicketResponse
@@ -14,6 +16,36 @@ router = APIRouter(prefix="/tickets", tags=["tickets"])
 
 def get_app(request: Request) -> Application:
     return request.app.state.container
+
+@router.post(
+    "/ingest",
+    response_model=None,
+    summary="Ingest ticket into vector DB",
+)
+async def ingest_ticket(
+    payload: IngestTicketHttpRequest,
+    request: Request,
+    app: Application = Depends(get_app),
+) -> None:
+    client_host = request.client.host if request.client else "unknown"
+    logger.info(
+        "POST /tickets/ingest from %s",
+        client_host,
+        extra={"description_length": len(payload.description)},
+    )
+    result: OperationResult[None] = app.ingest_ticket_controller.handle(payload)
+    if not result.is_success:
+        logger.warning(
+            "Ticket ingestion failed for %s: %s",
+            client_host,
+            result.error,
+        )
+        raise HTTPException(status_code=500, detail=str(result.error))
+    logger.info(
+        "Ticket ingestion succeeded for %s",
+        client_host,
+    )
+    return None
 
 
 @router.post(
