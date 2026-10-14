@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <record id="action_helpdesk_ticket_suggestion" model="ir.actions.act_window">
+        <field name="name">Sugerir con IA</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">helpdesk.ticket.suggestion</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="view_helpdesk_ticket_ai_suggestion_form"/>
+        <field name="target">new</field>
+    </record>
+</odoo>

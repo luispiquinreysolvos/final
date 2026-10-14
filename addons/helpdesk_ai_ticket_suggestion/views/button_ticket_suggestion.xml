@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- Keep the existing external ID so upgrading removes the old form button. -->
+    <record id="helpdesk_ticket_view_form_ai" model="ir.ui.view">
+        <field name="name">helpdesk.ticket.view.tree.ai.suggestion.button</field>
+        <field name="model">helpdesk.ticket</field>
+        <field name="type">tree</field>
+        <field name="inherit_id" ref="helpdesk_mgmt.ticket_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//tree" position="inside">
+                <header>
+                    <button name="%(action_helpdesk_ticket_suggestion)d"
+                            type="action"
+                            string="Crear con IA"
+                            display="always"
+                            icon="fa-magic"
+                            class="btn-primary"/>
+                </header>
+            </xpath>
+        </field>
+    </record>
+</odoo>
+

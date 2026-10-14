@@ -15,7 +15,14 @@
     "depends": [
         "helpdesk_mgmt",
     ],
+    "data": [
+        "security/ir.model.access.csv",
+        "wizards/ticket_suggestion_form_wizard.xml",
+        "data/action_open_ai_suggestion_wizard.xml",
+        "views/button_ticket_suggestion.xml",
+    ],
     "installable": True,
     "application": True,
     "auto_install": False,
 }
+

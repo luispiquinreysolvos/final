@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <record id="view_helpdesk_ticket_ai_suggestion_form" model="ir.ui.view">
+        <field name="name">ticket_ai_suggestion_wizard_form</field>
+        <field name="model">helpdesk.ticket.suggestion</field>
+        <field name="arch" type="xml">
+            <form string="Sugerir con IA">
+                <sheet>
+                    <group>
+                        <field name="prompt"/>
+                    </group>
+                </sheet>
+                <footer>
+                    <button string="Cerrar" special="cancel" class="btn-secondary"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>
