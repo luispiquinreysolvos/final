@@ -17,10 +17,16 @@
     ],
     "data": [
         "security/ir.model.access.csv",
+        "data/ir_config_parameter.xml",
         "wizards/ticket_suggestion_form_wizard.xml",
         "data/action_open_ai_suggestion_wizard.xml",
         "views/button_ticket_suggestion.xml",
     ],
+    "assets": {
+        "web.assets_backend": [
+            "helpdesk_ai_ticket_suggestion/static/src/scss/ticket_suggestion.scss",
+        ],
+    },
     "installable": True,
     "application": True,
     "auto_install": False,

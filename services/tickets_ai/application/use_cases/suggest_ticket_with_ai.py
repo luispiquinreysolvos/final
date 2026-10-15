@@ -15,7 +15,7 @@ class SuggestTicketWithAIUseCase:
     """Suggests ticket content using AI without creating the ticket automatically."""
     suggestion_service: TicketSuggestionService
 
-    def execute(self, request: SuggestTicketRequest) -> Result:
+    async def execute(self, request: SuggestTicketRequest) -> Result:
         logger.info(
             "Executing suggest ticket use case",
             extra={"description_length": len(request.problem_description)},
@@ -25,7 +25,7 @@ class SuggestTicketWithAIUseCase:
             logger.warning("Empty problem description in use case")
             return Result.failure(Error.validation_error("Problem description is required"))
 
-        response = self.suggestion_service.suggest_ticket(request.problem_description)
+        response = await self.suggestion_service.suggest_ticket(request.problem_description, request.images)
 
         logger.info(
             "Use case completed successfully",

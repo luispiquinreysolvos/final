@@ -1,0 +1,345 @@
+
+$ai-primary: #7456a6;
+$ai-hover: #593c88;
+$ai-text: #253047;
+$ai-muted: #626d80;
+$ai-border: #dce1eb;
+$ai-surface: #f6f7fb;
+
+.o_ai_ticket_suggestion_btn.btn-primary {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    padding: 9px 17px;
+    color: #fff;
+    background: $ai-primary;
+    border: 1px solid $ai-primary;
+    border-radius: 9px;
+    font-weight: 600;
+    box-shadow: 0 3px 8px rgba(68, 43, 106, 0.14);
+    transition: background-color 0.2s, box-shadow 0.2s;
+
+    &::after {
+        content: "";
+        position: absolute;
+        inset: -60% auto -60% -70%;
+        width: 35%;
+        background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(255, 255, 255, 0.32),
+            transparent
+        );
+        transform: skewX(-20deg);
+        transition: left 0.6s;
+        pointer-events: none;
+    }
+
+    &:hover:not(:disabled):not(.disabled) {
+        color: #fff;
+        background: $ai-hover;
+        border-color: $ai-hover;
+        box-shadow: 0 5px 16px rgba(68, 43, 106, 0.23);
+
+        &::after {
+            left: 140%;
+        }
+    }
+
+    &:focus-visible {
+        outline: 3px solid $ai-primary;
+        outline-offset: 3px;
+    }
+
+    &:disabled,
+    &.disabled {
+        opacity: 0.55;
+        box-shadow: none;
+    }
+}
+
+.modal:has(.ticket_ai_suggestion_wizard_form) {
+    .modal-content {
+        color: $ai-text;
+        background: #fff;
+        border: 1px solid rgba(116, 86, 166, 0.2);
+        border-radius: 18px;
+        overflow: hidden;
+        box-shadow:
+            0 28px 80px rgba(28, 24, 46, 0.23),
+            0 4px 16px rgba(28, 24, 46, 0.08);
+    }
+
+    .modal-header {
+        gap: 16px;
+        padding: 26px 30px 22px;
+        background: $ai-surface;
+        border: 0;
+        border-radius: 17px 17px 0 0;
+    }
+
+    .modal-title {
+        margin: 0;
+        color: $ai-text;
+        font-size: 22px;
+        font-weight: 700;
+        line-height: 1.3;
+        letter-spacing: -0.6px;
+        overflow-wrap: anywhere;
+    }
+
+    .btn-close {
+        flex-shrink: 0;
+        opacity: 0.65;
+        border-radius: 5px;
+        transition: opacity 0.2s;
+
+        &:hover {
+            opacity: 1;
+        }
+
+        &:focus-visible {
+            outline: 3px solid $ai-primary;
+            outline-offset: 4px;
+        }
+    }
+
+    .modal-body {
+        padding: 26px 30px;
+        background: #fff;
+    }
+
+    .o_form_view,
+    .o_form_sheet_bg,
+    .o_form_sheet {
+        background: transparent;
+    }
+
+    .o_form_sheet {
+        min-width: 0;
+        padding: 0;
+        border: 0;
+        box-shadow: none;
+    }
+
+    .ticket_ai_suggestion_wizard_form {
+        color: $ai-text;
+    }
+
+    .o_ai_wizard_section {
+        margin-bottom: 24px;
+    }
+
+    .o_ai_wizard_section,
+    .o_ai_wizard_upload_section {
+        label {
+            display: block;
+            margin-bottom: 10px;
+            color: $ai-text;
+            font-size: 13px;
+            font-weight: 600;
+            line-height: 1.5;
+        }
+    }
+
+    .o_ai_ticket_description_problem {
+        width: 100%;
+        min-width: 0;
+
+        textarea.o_input {
+            display: block;
+            box-sizing: border-box;
+            width: 100%;
+            min-height: 176px;
+            padding: 16px 18px;
+            color: $ai-text;
+            background: #fcfcfe;
+            border: 1px solid $ai-border;
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 1.75;
+            resize: vertical;
+            overflow: auto;
+            box-shadow: inset 0 2px 4px rgba(37, 48, 71, 0.025);
+            scrollbar-width: thin;
+            scrollbar-color: #c6bdd5 transparent;
+            transition:
+                border-color 0.2s,
+                box-shadow 0.2s,
+                background-color 0.2s;
+
+            &::placeholder {
+                color: #737e90;
+                opacity: 1;
+            }
+
+            &:hover:not(:disabled):not(:read-only) {
+                border-color: #b4a4cc;
+            }
+
+            &:focus,
+            &:focus-visible {
+                background: #fff;
+                border-color: $ai-primary;
+                outline: 2px solid transparent;
+                outline-offset: 2px;
+                box-shadow: 0 0 0 3px rgba(116, 86, 166, 0.16);
+            }
+
+            &:read-only {
+                color: $ai-muted;
+                background: $ai-surface;
+                resize: none;
+            }
+
+            &:disabled {
+                color: $ai-muted;
+                background: $ai-surface;
+                cursor: not-allowed;
+                box-shadow: none;
+            }
+        }
+
+        &.o_field_invalid textarea.o_input,
+        textarea.o_input[aria-invalid="true"] {
+            border-color: #b42338;
+            box-shadow: 0 0 0 3px rgba(180, 35, 56, 0.12);
+        }
+    }
+
+    .o_ai_wizard_upload_section {
+        padding: 0;
+        background: transparent;
+        border: none;
+        border-radius: 0;
+
+        .o_ai_ticket_description_images {
+            width: 100%;
+            min-width: 0;
+        }
+    }
+
+    .modal-footer {
+        gap: 10px;
+        padding: 18px 30px 22px;
+        background: #fff;
+        border-top: 1px solid #eceef4;
+        border-radius: 0 0 17px 17px;
+
+        .btn {
+            min-height: 42px;
+            margin: 0;
+            padding: 10px 19px;
+            border-radius: 9px;
+            font-size: 13px;
+            font-weight: 600;
+            line-height: 1.5;
+            transition:
+                background-color 0.2s,
+                border-color 0.2s,
+                box-shadow 0.2s;
+
+            &:focus-visible {
+                outline: 3px solid $ai-primary;
+                outline-offset: 3px;
+            }
+
+            &:disabled,
+            &.disabled {
+                opacity: 0.55;
+                box-shadow: none;
+            }
+        }
+
+        .btn-primary {
+            color: #fff;
+            background: $ai-primary;
+            border-color: $ai-primary;
+            box-shadow: 0 3px 8px rgba(68, 43, 106, 0.13);
+
+            &:hover:not(:disabled):not(.disabled),
+            &:active:not(:disabled):not(.disabled) {
+                color: #fff;
+                background: $ai-hover;
+                border-color: $ai-hover;
+            }
+        }
+
+        .btn-secondary {
+            color: $ai-text;
+            background: #fff;
+            border-color: $ai-border;
+            box-shadow: none;
+
+            &:hover:not(:disabled):not(.disabled),
+            &:active:not(:disabled):not(.disabled) {
+                color: $ai-text;
+                background: $ai-surface;
+                border-color: #bbc3d2;
+            }
+        }
+    }
+}
+
+@media (max-width: 576px) {
+    .modal:has(.ticket_ai_suggestion_wizard_form) {
+        .modal-content {
+            border-radius: 12px;
+        }
+
+        .modal-header {
+            padding: 20px;
+            border-radius: 11px 11px 0 0;
+        }
+
+        .modal-title {
+            font-size: 20px;
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .o_ai_wizard_section {
+            margin-bottom: 20px;
+        }
+
+        .o_ai_ticket_description_problem {
+            textarea.o_input {
+                min-height: 150px;
+                padding: 13px 14px;
+                font-size: 16px;
+            }
+        }
+
+        .modal-footer {
+            flex-wrap: wrap;
+            padding: 16px 20px 20px;
+            border-radius: 0 0 11px 11px;
+
+            .btn {
+                flex: 1 1 auto;
+            }
+        }
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .o_ai_ticket_suggestion_btn.btn-primary {
+        transition: none;
+
+        &::after {
+            display: none;
+        }
+    }
+
+    .modal:has(.ticket_ai_suggestion_wizard_form) {
+        .btn,
+        .btn-close,
+        .o_ai_ticket_description_problem textarea.o_input {
+            transition: none;
+        }
+    }
+}

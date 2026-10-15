@@ -14,7 +14,7 @@
                             string="Crear con IA"
                             display="always"
                             icon="fa-magic"
-                            class="btn-primary"/>
+                            class="btn-primary o_ai_ticket_suggestion_btn"/>
                 </header>
             </xpath>
         </field>

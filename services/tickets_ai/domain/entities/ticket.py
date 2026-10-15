@@ -1,8 +1,9 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime
 
 from domain.value_objects.ticket_description import TicketDescription
 from domain.value_objects.ticket_email import TicketEmail
+from domain.value_objects.ticket_images import TicketImages
 from domain.value_objects.ticket_number import TicketNumber
 from domain.value_objects.ticket_priority import TicketPriority
 from domain.value_objects.ticket_tags import TicketTags
@@ -26,6 +27,7 @@ class Ticket:
     closed: bool
     active: bool
     write_date: datetime
+    images: TicketImages = field(default_factory=TicketImages)
 
     def is_searchable(self) -> bool:
         return self.active

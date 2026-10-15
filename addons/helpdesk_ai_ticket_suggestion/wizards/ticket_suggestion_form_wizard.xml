@@ -1,17 +1,56 @@
-<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <record id="view_helpdesk_ticket_ai_suggestion_form" model="ir.ui.view">
         <field name="name">ticket_ai_suggestion_wizard_form</field>
         <field name="model">helpdesk.ticket.suggestion</field>
         <field name="arch" type="xml">
-            <form string="Sugerir con IA">
+            <form
+                string="Crear ticket con IA"
+                class="ticket_ai_suggestion_wizard_form"
+            >
                 <sheet>
-                    <group>
-                        <field name="prompt"/>
-                    </group>
+                    <div class="o_ai_wizard_section">
+                        <label
+                            for="prompt"
+                            string="Descripción del problema"
+                        />
+
+                        <field
+                            name="prompt"
+                            class="o_ai_ticket_description_problem"
+                            nolabel="1"
+                            placeholder="Ej.: El cliente no puede acceder a su cuenta desde ayer..."
+                        />
+                    </div>
+
+                    <div class="o_ai_wizard_upload_section">
+                        <label
+                            for="files_data"
+                            string="Archivo adjunto (opcional)"
+                        />
+
+                        <field
+                            name="files_data"
+                            widget="binary_file"
+                            class="o_ai_ticket_description_images"
+                            nolabel="1"
+                        />
+                    </div>
                 </sheet>
+
                 <footer>
-                    <button string="Cerrar" special="cancel" class="btn-secondary"/>
+                    <button
+                        string="Cerrar"
+                        special="cancel"
+                        class="btn-secondary"
+                    />
+
+                    <button
+                        string="Generar sugerencia"
+                        type="object"
+                        name="action_suggest"
+                        class="btn-primary"
+                    />
                 </footer>
             </form>
         </field>

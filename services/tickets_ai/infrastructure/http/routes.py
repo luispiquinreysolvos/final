@@ -1,8 +1,10 @@
 import logging
-from fastapi import APIRouter, Depends, HTTPException, Request
+from typing import Annotated
 
-from application import result
+from fastapi import APIRouter, Depends, File, Form, HTTPException, Request, UploadFile
+
 from infrastructure.composition import Application
+from infrastructure.http.rate_limit import limiter
 from presentation.operation_result import OperationResult
 from presentation.schemas.ingest_ticket_http_request import IngestTicketHttpRequest
 from presentation.schemas.suggest_ticket_http_request import SuggestTicketHttpRequest
@@ -53,11 +55,14 @@ async def ingest_ticket(
     response_model=SuggestTicketHttpResponse,
     summary="Suggest ticket with AI",
 )
+@limiter.limit("10/minute")
 async def suggest_ticket(
-    payload: SuggestTicketHttpRequest,
+    problem_description: Annotated[str, Form(min_length=1)],
     request: Request,
+    file: Annotated[list[UploadFile] | None, File()] = None,
     app: Application = Depends(get_app),
 ) -> SuggestTicketHttpResponse:
+    payload = SuggestTicketHttpRequest(problem_description=problem_description)
     client_host = request.client.host if request.client else "unknown"
     logger.info(
         "POST /tickets/suggest from %s",
@@ -65,7 +70,7 @@ async def suggest_ticket(
         extra={"description_length": len(payload.problem_description)},
     )
 
-    result: OperationResult[SuggestTicketResponse] = app.suggest_ticket_controller.handle(payload)
+    result: OperationResult[SuggestTicketResponse] = await app.suggest_ticket_controller.handle(payload, file)
     if not result.is_success:
         logger.warning(
             "Ticket suggestion failed for %s: %s",

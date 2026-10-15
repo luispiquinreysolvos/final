@@ -4,10 +4,13 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/odoo-addons-oca-helpdesk.iml" filepath="$PROJECT_DIR$/.idea/odoo-addons-oca-helpdesk.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/odoo-addons-oca-helpdesk@1.iml" filepath="$PROJECT_DIR$/.idea/odoo-addons-oca-helpdesk@1.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/odoo-addons-oca-helpdesk@2.iml" filepath="$PROJECT_DIR$/.idea/odoo-addons-oca-helpdesk@2.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/slv-ai.iml" filepath="$PROJECT_DIR$/.idea/slv-ai.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/slv-ai@1.iml" filepath="$PROJECT_DIR$/.idea/slv-ai@1.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/slv-ai@2.iml" filepath="$PROJECT_DIR$/.idea/slv-ai@2.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/solvos.iml" filepath="$PROJECT_DIR$/.idea/solvos.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/solvos@1.iml" filepath="$PROJECT_DIR$/.idea/solvos@1.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/solvos@2.iml" filepath="$PROJECT_DIR$/.idea/solvos@2.iml" />
     </modules>
   </component>
 </project>

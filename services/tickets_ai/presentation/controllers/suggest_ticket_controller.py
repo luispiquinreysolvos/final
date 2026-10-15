@@ -1,9 +1,13 @@
 import logging
 from dataclasses import dataclass
 
+from fastapi import UploadFile
+
 from application.dtos.suggest_ticket_request import SuggestTicketRequest
 from application.dtos.suggest_ticket_response import SuggestTicketResponse
 from application.use_cases.suggest_ticket_with_ai import SuggestTicketWithAIUseCase
+from domain.value_objects.ticket_image import Image
+from domain.value_objects.ticket_images import TicketImages
 from presentation.operation_result import OperationResult
 from presentation.schemas.suggest_ticket_http_request import SuggestTicketHttpRequest
 
@@ -14,15 +18,26 @@ logger = logging.getLogger(__name__)
 class SuggestTicketController:
     suggest_ticket_use_case: SuggestTicketWithAIUseCase
 
-    def handle(self, http_request: SuggestTicketHttpRequest) -> OperationResult[SuggestTicketResponse]:
+    async def handle(self, http_request: SuggestTicketHttpRequest, file: list[UploadFile] | None = None) -> OperationResult[SuggestTicketResponse]:
         logger.info(
             "Handling ticket suggestion request",
             extra={"description_length": len(http_request.problem_description)},
         )
 
         try:
-            request = SuggestTicketRequest(problem_description=http_request.problem_description)
-            result = self.suggest_ticket_use_case.execute(request)
+            images = TicketImages([
+                Image(
+                    filename=upload.filename or "",
+                    content_type=upload.content_type or "",
+                    content=await upload.read(),
+                )
+                for upload in file or []
+            ])
+            request = SuggestTicketRequest(
+                problem_description=http_request.problem_description,
+                images=images,
+            )
+            result = await self.suggest_ticket_use_case.execute(request)
         except ValueError as error:
             logger.warning("Invalid request: %s", error)
             return OperationResult.fail(str(error))

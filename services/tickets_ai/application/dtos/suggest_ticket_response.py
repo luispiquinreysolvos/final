@@ -5,5 +5,6 @@ from dataclasses import dataclass
 class SuggestTicketResponse:
     title: str
     description: str
+    category: str
     priority: str
     tags: tuple[str, ...]

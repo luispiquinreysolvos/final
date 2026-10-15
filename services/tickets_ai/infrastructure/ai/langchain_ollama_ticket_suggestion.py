@@ -1,14 +1,17 @@
-
+import asyncio
+import base64
 import logging
 import os
 import time
 from typing import List
 
-from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.messages import HumanMessage
+from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_ollama import ChatOllama
 
 from application.dtos.suggest_ticket_response import SuggestTicketResponse
 from application.interfaces.ticket_suggestion_service import TicketSuggestionService
+from domain.value_objects.ticket_images import TicketImages
 from presentation.schemas.suggest_ticket_http_response import SuggestTicketHttpResponse
 
 logger = logging.getLogger(__name__)
@@ -52,6 +55,9 @@ FIELD SPECIFICATIONS:
   If the available information is limited, explain everything
   that is known without artificially extending the description
   through repetition or speculation.
+
+- category:
+  Categorize the issue based on the nature of the problem and its impact on the business or users.
 
 - priority:
   Use the Odoo Helpdesk priority convention:
@@ -100,6 +106,7 @@ TICKET_PROMPT = ChatPromptTemplate.from_messages(
             """{{
     "title": "Production Database Down",
     "description": "The production database is unresponsive, preventing customers from completing purchases in the online store.",
+    "category": "Technical",
     "priority": "3",
     "tags": ["database", "production", "outage", "checkout"]
 }}""",
@@ -116,20 +123,21 @@ TICKET_PROMPT = ChatPromptTemplate.from_messages(
             """{{
     "title": "Outlook Account Lockout",
     "description": "The user cannot access Outlook because they forgot their email credentials.",
+    "category": "Technical",
     "priority": "1",
     "tags": ["email", "outlook", "password-reset", "authentication"]
 }}""",
         ),
-        ("human", "User report:\n{input_text}"),
+        MessagesPlaceholder("user_report"),
     ]
 )
 
 
-def _safe_invoke(chain, payload: dict, max_retries: int = 2):
+async def _safe_invoke(chain, payload: dict, max_retries: int = 2):
     retries = 0
     while retries <= max_retries:
         try:
-            return chain.invoke(payload)
+            return await chain.ainvoke(payload)
         except (KeyError, ValueError, TypeError):
             raise
         except Exception as e:
@@ -159,7 +167,7 @@ def _safe_invoke(chain, payload: dict, max_retries: int = 2):
                     "wait_time": wait_time,
                 },
             )
-            time.sleep(wait_time)
+            await asyncio.sleep(wait_time)
 
 
 def _parse_float_env(key: str, default: float) -> float:
@@ -275,7 +283,7 @@ class LangChainOllamaTicketSuggestionService(TicketSuggestionService):
             SuggestTicketHttpResponse
         )
 
-    def suggest_ticket(self, description: str) -> SuggestTicketResponse:
+    async def suggest_ticket(self, description: str, images: TicketImages | None = None) -> SuggestTicketResponse:
         if not description or not description.strip():
             logger.warning("Empty description provided for ticket suggestion")
             raise ValueError("Description cannot be empty.")
@@ -288,11 +296,19 @@ class LangChainOllamaTicketSuggestionService(TicketSuggestionService):
             },
         )
 
-        payload = {"input_text": description.strip()}
+        content: list[dict] = [{"type": "text", "text": f"User report:\n{description.strip()}"}]
+        if images is not None:
+            for image in images.images:
+                encoded = base64.b64encode(image.content).decode("ascii")
+                content.append({
+                    "type": "image_url",
+                    "image_url": {"url": f"data:{image.content_type};base64,{encoded}"},
+                })
+        payload = {"user_report": [HumanMessage(content=content)]}
 
         start_time = time.perf_counter()
 
-        schema_response: SuggestTicketHttpResponse = _safe_invoke(
+        schema_response: SuggestTicketHttpResponse = await _safe_invoke(
             self.chain,
             payload,
             max_retries=self.max_retries,
@@ -313,6 +329,7 @@ class LangChainOllamaTicketSuggestionService(TicketSuggestionService):
         return SuggestTicketResponse(
             title=schema_response.title,
             description=schema_response.description,
+            category=schema_response.category,
             priority=schema_response.priority,
             tags=schema_response.tags,
         )

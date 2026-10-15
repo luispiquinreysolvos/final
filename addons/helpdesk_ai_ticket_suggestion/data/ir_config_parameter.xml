@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <record id="config_parameter_ai_client_url" model="ir.config_parameter">
+        <field name="key">helpdesk_ai_ticket_suggestion.ai_client_url</field>
+        <field name="value">http://ai-api:8000/tickets/suggest</field>
+    </record>
+</odoo>

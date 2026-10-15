@@ -3,8 +3,11 @@ import sys
 from contextlib import asynccontextmanager
 from dotenv import load_dotenv
 from fastapi import FastAPI
+from slowapi import _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
 
 from infrastructure.composition import create_application
+from infrastructure.http.rate_limit import limiter
 from infrastructure.http.routes import router as tickets_router
 
 load_dotenv()
@@ -31,14 +34,19 @@ logger = logging.getLogger(__name__)
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     logger.info("Starting application...")
-    app.state.container = create_application()
-    logger.info("Application started successfully")
-    yield
-    logger.info("Shutting down application...")
 
+    app.state.container = create_application()
+
+    logger.info("Application started successfully")
+
+    yield
+
+    logger.info("Shutting down application...")
 
 app = FastAPI(title="Solvos", lifespan=lifespan)
 app.include_router(tickets_router)
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 
 @app.get("/health")
