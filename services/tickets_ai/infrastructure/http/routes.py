@@ -33,19 +33,22 @@ async def ingest_ticket(
     logger.info(
         "POST /tickets/ingest from %s",
         client_host,
-        extra={"description_length": len(payload.description)},
+        extra={"ticket_id": payload.id, "description_length": len(payload.description)},
     )
-    result: OperationResult[None] = app.ingest_ticket_controller.handle(payload)
+
+    result: OperationResult[None] = await app.ingest_ticket_controller.handle(payload)
     if not result.is_success:
         logger.warning(
             "Ticket ingestion failed for %s: %s",
             client_host,
             result.error,
         )
-        raise HTTPException(status_code=500, detail=str(result.error))
+        raise HTTPException(status_code=400, detail=result.error)
+
     logger.info(
-        "Ticket ingestion succeeded for %s",
+        "Ticket ingestion succeeded for %s: ticket_id=%s",
         client_host,
+        payload.id,
     )
     return None
 

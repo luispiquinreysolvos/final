@@ -21,6 +21,7 @@
         "wizards/ticket_suggestion_form_wizard.xml",
         "data/action_open_ai_suggestion_wizard.xml",
         "views/button_ticket_suggestion.xml",
+        "data/action_cron_process_ticket_outbox.xml",
     ],
     "assets": {
         "web.assets_backend": [

@@ -1,5 +1,5 @@
-from odoo import _, fields, models
-from odoo.exceptions import UserError
+from odoo import _, fields, models, api
+from odoo.exceptions import UserError, ValidationError
 
 
 class TicketSuggestionFormWizard(models.TransientModel):
@@ -7,32 +7,31 @@ class TicketSuggestionFormWizard(models.TransientModel):
     _description = 'Helpdesk AI Ticket Suggestion Wizard'
 
     prompt = fields.Text(string='Prompt')
-    files_data = fields.Binary(
-        string='Images', attachment=True, copy=False
-    )
+    image_ids = fields.Many2many('ir.attachment', string='Images')
+
+    @api.constrains("image_ids")
+    def _check_image_ids(self):
+        for record in self:
+            if not all(
+                    attachment.mimetype
+                    and attachment.mimetype.startswith("image/")
+                    for attachment in record.image_ids
+            ):
+                raise ValidationError(
+                    _("Solo se permiten archivos de imagen.")
+                )
 
     def action_suggest(self):
         self.ensure_one()
         if not self.prompt:
             raise UserError(_('Describe el problema antes de pedir una sugerencia.'))
-        suggestion = self.env['helpdesk.ai.ticket.suggestion.client'].call_ai_client(self.prompt, self.files_data)
+        suggestion = self.env['helpdesk.ticket.suggestion.api.client'].request_suggestion(self.prompt, self.image_ids)
 
         Tag = self.env['helpdesk.ticket.tag']
         tag_ids = []
 
         Category = self.env['helpdesk.ticket.category']
         category_ids = []
-
-        Attachment = self.env['ir.attachment']
-        attachment_ids = []
-
-        if self.files_data:
-            attachment = self.env['ir.attachment'].create({
-                'name': 'AI Ticket Suggestion',
-                'type': 'binary',
-                'datas': self.files_data,
-            })
-            attachment_ids.append(attachment.id)
 
         category = Category.search([
             ('name', '=ilike', suggestion.get('category', ''))
@@ -68,6 +67,6 @@ class TicketSuggestionFormWizard(models.TransientModel):
                 'default_category_id': category.id,
                 'default_priority': suggestion['priority'],
                 'default_tag_ids': [(6,0,tag_ids)],
-                'default_attachment_ids': [(6,0,attachment_ids)],
+                'default_attachment_ids': [(6,0,self.image_ids.ids)],
             },
         }

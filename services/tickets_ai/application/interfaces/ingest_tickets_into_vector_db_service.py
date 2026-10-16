@@ -6,5 +6,5 @@ from application.dtos.ingest_tickets_into_vector_db_request import IngestTickets
 class IngestTicketsIntoVectorDbService(ABC):
 
     @abstractmethod
-    def ingest_tickets_into_vector_db(self, ticket: IngestTicketsIntoVectorDbRequest) -> None:
+    async def ingest_tickets_into_vector_db(self, ticket: IngestTicketsIntoVectorDbRequest) -> None:
         pass

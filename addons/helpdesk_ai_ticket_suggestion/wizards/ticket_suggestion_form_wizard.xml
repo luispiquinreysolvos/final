@@ -24,14 +24,10 @@
                     </div>
 
                     <div class="o_ai_wizard_upload_section">
-                        <label
-                            for="files_data"
-                            string="Archivo adjunto (opcional)"
-                        />
 
                         <field
-                            name="files_data"
-                            widget="binary_file"
+                            name="image_ids"
+                            widget="many2many_binary"
                             class="o_ai_ticket_description_images"
                             nolabel="1"
                         />
